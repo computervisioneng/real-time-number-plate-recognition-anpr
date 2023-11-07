@@ -2,6 +2,10 @@
 
 ## pipeline
 
+<p align="center">
+    <img width="100%" src="https://github.com/computervisioneng/real-time-number-plate-recognition-anpr/blob/main/pipeline.jpg" alt="Project pipeline">
+</p>
+
 ## execution
 
 ### setting up producer
