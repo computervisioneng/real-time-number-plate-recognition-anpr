@@ -1,5 +1,7 @@
 # real-time-number-plate-recognition-anpr
 
+## pipeline
+
 ## execution
 
 ### setting up producer
@@ -90,12 +92,19 @@
 - Go to SQS and create a FIFO queue.
 - Go to Lambda and create a new Lambda function with the files: **lambda_function.py** and **util.py**.
 - Go to the S3 bucket and create a new event notification to trigger the lambda function.
-- In the EC2 instance, go to **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example.py** and edit the variable names.
+- In the EC2 instance, go to **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example_object_detection_and_tracking.py** and edit the variable names.
 - In the Lambda function, go to **lambda_function.py** and edit the variable names.
 - Execute the following commands:
 
       cd ~/amazon-kinesis-video-streams-consumer-library-for-python
-      python kvs_consumer_library_example.py
+      python kvs_consumer_library_example_object_detection_and_tracking.py
 
 ### setting up consumer #2: visualization
 
+- Clone this repository https://github.com/computervisioneng/amazon-kinesis-video-streams-consumer-library-for-python.git
+- Download the files **main_plot.py** and **process_queue.py**.
+- Go to **main_plot.py**, **process_queue.py** and **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example_visualization.py** and edit the variables.
+- Create a virtual environment and install requirements.
+- Execute **process_queue.py**.
+- Execute **main_plot.py**.
+- Execute **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example_object_detection_and_tracking.py**.
