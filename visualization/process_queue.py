@@ -2,32 +2,43 @@ import time
 import ast
 import os
 import json
+import shutil
 
 import pandas as pd
 import boto3
 
 
+queue_url = 'queue-url'
+
+table_name = 'table-name'
+
+access_key = "access-key"
+secret_key = "secret-key"
+region_name = 'region-name'
+
 detections_dir = './amazon-kinesis-video-streams-consumer-library-for-python/detections/'
 processed_fragments_dir = './amazon-kinesis-video-streams-consumer-library-for-python/processed_fragments/'
 license_plates_dir = './amazon-kinesis-video-streams-consumer-library-for-python/license_plates/'
+frames_dir = './amazon-kinesis-video-streams-consumer-library-for-python/frames/'
+
+for dir_ in [detections_dir, processed_fragments_dir, license_plates_dir, frames_dir]:
+  if os.path.exists(dir_):
+      shutil.rmtree(dir_)
+  os.makedirs(dir_)
 
 sqs = boto3.client(
                     'sqs',
-                    aws_access_key_id="access-key",
-                    aws_secret_access_key="secret-key",
-                    region_name='region-name'
+                    aws_access_key_id=access_key,
+                    aws_secret_access_key=secret_key,
+                    region_name=region_name
 )
 
 dynamodb = boto3.client(
                     'dynamodb',
-                    aws_access_key_id="access-key",
-                    aws_secret_access_key="secret-key",
-                    region_name='region-name'
+                    aws_access_key_id=access_key,
+                    aws_secret_access_key=secret_key,
+                    region_name=region_name
 )
-
-queue_url = 'queue-url'
-
-table_name = 'table-name'
 
 while True:
 
