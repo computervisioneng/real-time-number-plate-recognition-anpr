@@ -44,7 +44,7 @@
 
       cd ~
 
-      wget https://raw.githubusercontent.com/computervisioneng/real-time-number-plate-recognition-anpr/main/sample_30fps_1440.mp4?token=GHSAT0AAAAAACJ3Y6KVKY2YWW3Q734TM646ZKKHFPQ
+      wget https://raw.githubusercontent.com/computervisioneng/real-time-number-plate-recognition-anpr/main/sample_30fps_1440.mp4
 
 - Go to IAM and create a new user with **AmazonKinesisVideoStreamsFullAccess** permissions.
 - Select the IAM user you created, go to __Security credentials_ and create access keys.
@@ -59,20 +59,43 @@
 - Execute the following commands in the EC2 instance:
 
       sudo apt update
+  
       sudo apt install python3-virtualenv
+
       virtualenv venv --python=python3
+  
       source venv/bin/activate
+  
       git clone https://github.com/computervisioneng/amazon-kinesis-video-streams-consumer-library-for-python.git
+
+      cd amazon-kinesis-video-streams-consumer-library-for-python
+  
       git clone https://github.com/abewley/sort.git
-      pip install -r amazon-kinesis-video-streams-consumer-library-for-python/requirements.txt
+  
+      pip install -r requirements.txt
+  
       pip install -r sort/requirements.txt
+  
       pip install ultralytics
 
+      sudo apt-get update && sudo apt-get install ffmpeg libsm6 libxext6  -y
+
+      sudo apt-get install python3-tk
+
 - Go to IAM and create and access role for the EC2 isntance with the following policies: **AmazonKinesisVideoStreamsFullAccess**, **AmazonDynamoDBFullAccess**, **AmazonS3FullAccess** and **AmazonSQSFullAccess**.
+- Attach the IAM role to the EC2 instance.
+- Download the object detector into the EC2 instance.
 - Go to S3 and create an S3 bucket.
 - Go to Dynamodb and create two tables.
 - Go to SQS and create a FIFO queue.
 - Go to Lambda and create a new Lambda function with the files: **lambda_function.py** and **util.py**.
+- Go to the S3 bucket and create a new event notification to trigger the lambda function.
+- In the EC2 instance, go to **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example.py** and edit the variable names.
+- In the Lambda function, go to **lambda_function.py** and edit the variable names.
+- Execute the following commands:
+
+      cd ~/amazon-kinesis-video-streams-consumer-library-for-python
+      python kvs_consumer_library_example.py
 
 ### setting up consumer #2: visualization
 
