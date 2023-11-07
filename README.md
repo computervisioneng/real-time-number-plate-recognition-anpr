@@ -40,11 +40,39 @@
 
       export LD_LIBRARY_PATH=`pwd`/open-source/local/lib
 
-  
+- Download the video we will be using to test this project:
 
-      
+      cd ~
+
+      wget https://raw.githubusercontent.com/computervisioneng/real-time-number-plate-recognition-anpr/main/sample_30fps_1440.mp4?token=GHSAT0AAAAAACJ3Y6KVKY2YWW3Q734TM646ZKKHFPQ
+
+- Go to IAM and create a new user with **AmazonKinesisVideoStreamsFullAccess** permissions.
+- Select the IAM user you created, go to __Security credentials_ and create access keys.
+- In the EC2 instance run the following command:
+
+      gst-launch-1.0 -v  filesrc location="./sample_30fps_1440.mp4" ! qtdemux name=demux ! queue ! h264parse ! video/x-h264,stream-format=avc,alignment=au ! kvssink name=sink stream-name="stream-name" access-key="access-key" secret-key="secret-key" aws-region="region-name" streaming-type=offline demux. ! queue ! aacparse ! sink.
 
 ### setting up consumer #1: object detection and tracking
+
+- Go to EC2 and launch a t2.xlarge instance with 30GB storage size.
+- SSH into the EC2 instance.
+- Execute the following commands in the EC2 instance:
+
+      sudo apt update
+      sudo apt install python3-virtualenv
+      virtualenv venv --python=python3
+      source venv/bin/activate
+      git clone https://github.com/computervisioneng/amazon-kinesis-video-streams-consumer-library-for-python.git
+      git clone https://github.com/abewley/sort.git
+      pip install -r amazon-kinesis-video-streams-consumer-library-for-python/requirements.txt
+      pip install -r sort/requirements.txt
+      pip install ultralytics
+
+- Go to IAM and create and access role for the EC2 isntance with the following policies: **AmazonKinesisVideoStreamsFullAccess**, **AmazonDynamoDBFullAccess**, **AmazonS3FullAccess** and **AmazonSQSFullAccess**.
+- Go to S3 and create an S3 bucket.
+- Go to Dynamodb and create two tables.
+- Go to SQS and create a FIFO queue.
+- Go to Lambda and create a new Lambda function with the files: **lambda_function.py** and **util.py**.
 
 ### setting up consumer #2: visualization
 
