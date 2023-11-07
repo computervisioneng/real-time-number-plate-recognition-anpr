@@ -103,6 +103,8 @@
 
 - Clone this repository https://github.com/computervisioneng/amazon-kinesis-video-streams-consumer-library-for-python.git
 - Download the files **main_plot.py** and **process_queue.py**.
+- Go to IAM and create a new user with **AmazonDynamoDBFullAccess** and **AmazonSQSFullAccess** permissions.
+- Select the IAM user you created, go to __Security credentials_ and create access keys.
 - Go to **main_plot.py**, **process_queue.py** and **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example_visualization.py** and edit the variables.
 - Create a virtual environment and install requirements.
 - Execute **process_queue.py**.
