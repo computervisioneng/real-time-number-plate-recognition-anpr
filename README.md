@@ -49,7 +49,7 @@
       wget https://raw.githubusercontent.com/computervisioneng/real-time-number-plate-recognition-anpr/main/sample_30fps_1440.mp4
 
 - Go to IAM and create a new user with **AmazonKinesisVideoStreamsFullAccess** permissions.
-- Select the IAM user you created, go to __Security credentials_ and create access keys.
+- Select the IAM user you created, go to _Security credentials_ and create access keys.
 - In the EC2 instance run the following command:
 
       gst-launch-1.0 -v  filesrc location="./sample_30fps_1440.mp4" ! qtdemux name=demux ! queue ! h264parse ! video/x-h264,stream-format=avc,alignment=au ! kvssink name=sink stream-name="stream-name" access-key="access-key" secret-key="secret-key" aws-region="region-name" streaming-type=offline demux. ! queue ! aacparse ! sink.
@@ -104,7 +104,7 @@
 - Clone this repository https://github.com/computervisioneng/amazon-kinesis-video-streams-consumer-library-for-python.git
 - Download the files **main_plot.py** and **process_queue.py**.
 - Go to IAM and create a new user with **AmazonDynamoDBFullAccess** and **AmazonSQSFullAccess** permissions.
-- Select the IAM user you created, go to __Security credentials_ and create access keys.
+- Select the IAM user you created, go to _Security credentials_ and create access keys.
 - Go to **main_plot.py**, **process_queue.py** and **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example_visualization.py** and edit the variables.
 - Create a virtual environment and install requirements.
 - Execute **process_queue.py**.
