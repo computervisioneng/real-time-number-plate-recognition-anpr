@@ -32,8 +32,6 @@
 
       sudo apt-get install build-essential
   
-      cmake -DBUILD_GSTREAMER_PLUGIN=TRUE ..
-
       cmake .. -DBUILD_DEPENDENCIES=OFF -DBUILD_GSTREAMER_PLUGIN=ON
 
       make
