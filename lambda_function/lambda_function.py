@@ -31,7 +31,7 @@ def lambda_handler(event, context):
     tic = time.time()
     
     bucket_name = event['Records'][0]['s3']['bucket']['name']
-    document_name = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    document_name = event['Records'][0]['s3']['object']['key']
     
     track_id_ = int(document_name.split('_')[0])
     
