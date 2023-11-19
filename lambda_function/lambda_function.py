@@ -1,108 +1,106 @@
 import json
 import time
-import urllib.parse
-import json
-import string
 import random
+import string
 
 import boto3
 
-from util import license_complies_format, format_license
+import util
 
 
-def random_string(N=20):
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
+def random_string():
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
 
 
-region_name = 'region-name'
+region_name = 'us-east-1'
 
+# define clients
+ 
 s3_client = boto3.client('s3', region_name=region_name)
-
-textract = boto3.client('textract')
-
 dynamodb_client = boto3.client('dynamodb', region_name=region_name)
-
+textract_client = boto3.client('textract', region_name=region_name)
 sqs_client = boto3.client('sqs', region_name=region_name)
-
-queue_url = 'queue-url'
 
 def lambda_handler(event, context):
     
     tic = time.time()
     
-    bucket_name = event['Records'][0]['s3']['bucket']['name']
-    document_name = event['Records'][0]['s3']['object']['key']
+    # get object
+    bucket_name = event['Records'][0]['s3']['bucket']['name'] 
+    filename = event['Records'][0]['s3']['object']['key'] 
     
-    track_id_ = int(document_name.split('_')[0])
+    print(filename, bucket_name)
     
-    # Define the S3 object containing the image
-    s3_object = {'Bucket': bucket_name, 'Name': document_name}
+    car_id_ = int(filename.split('_')[0])
     
-    tic = time.time()
-    # Start the Textract analysis job
-    error = True
-    while error:
+    # text detection (initialize textract job)
+    s3_object = {'Bucket': bucket_name, 'Name': filename}
+    
+    while True:
         try:
-            response = textract.start_document_text_detection(
+            response = textract_client.start_document_text_detection(
                 DocumentLocation={'S3Object': s3_object}
-            )
-            error = False
+                )
+            break
         except Exception:
             time.sleep(1)
     
-    # Get the JobId from the response
     job_id = response['JobId']
+    print(job_id)
     
-    # Poll the job status until it's complete
     while True:
         try:
-            response = textract.get_document_text_detection(JobId=job_id)
+            # get results from textract job
+            response = textract_client.get_document_text_detection(JobId=job_id)
             status = response['JobStatus']
             if status in ['SUCCEEDED', 'FAILED']:
                 break
         except Exception:
             time.sleep(1)
     
-    # If the job is successful, retrieve the results
+    print(status)
+    
+    # verify license number complies format 
     if status == 'SUCCEEDED':
-        # Extract and print the detected text
-        text = ""
+        text = ''
         for item in response['Blocks']:
             if item['BlockType'] == 'LINE':
                 text += item['Text']
                 
         text = text.upper().replace(' ', '').replace('\n', '')
-
-        if license_complies_format(text):
-            license_plate_number_ = format_license(text)
+        print(text)
+        if util.license_complies_format(text):
+            license_plate_number_ = util.format_license(text)
             
-            tac = time.time()
-            
+            # write to database
             item = {
-                'car_id': {'S': str(track_id_)},
+                'car_id': {'S': str(car_id_)},
                 'license_plate_number': {'S': license_plate_number_},
-                'time': {'S': str(tac - tic)}
+                'time': {'S': str(time.time() - tic)}
             }
             
-            response = dynamodb_client.put_item(TableName='table-name', Item=item)
+            response = dynamodb_client.put_item(TableName='license_plate_numbers', Item=item)
             
-            response = sqs_client.send_message(
-                    QueueUrl=queue_url,
-                    MessageBody=json.dumps({'license_plate': {'track_id': str(track_id_), 'text': license_plate_number_}}),
-                    MessageGroupId='{}_{}'.format(str(track_id_), license_plate_number_),
-                    MessageDeduplicationId=random_string()
+            # update the sqs queue
+            sqs_client.send_message(
+                QueueUrl='https://sqs.us-east-1.amazonaws.com/996209742703/RealTimeANPRTutorialQueue.fifo',
+                MessageBody=json.dumps({'license_plate': {'track_id': str(car_id_),
+                                                    'text':license_plate_number_}
+                    
+                }),
+                MessageGroupId='lambda',
+                MessageDeduplicationId=random_string()
                 )
-
-            
+                
         else:
-            # TODO: HANDLE READING ERROR !
+            # TODO: implement ! 
             pass
-
+                
     else:
-        print('Textract job failed.')
-        
-    print(time.time() - tic)
+        # TODO: implement !
+        pass
     
+            
     # TODO implement
     return {
         'statusCode': 200,
