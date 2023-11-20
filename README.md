@@ -101,6 +101,7 @@
 - Go to Lambda and create a new Lambda function with the files: **lambda_function.py** and **util.py**.
 - Go to IAM and create an access role for the Lambda function with the following policies: **AmazonDynamoDBFullAccess**, **AmazonS3FullAccess**, **AmazonSQSFullAccess** and **TextractFullAccess**.
 - Attach the IAM role to the Lambda function.
+- Edit Lambda function timeout to 1 minute.
 - Go to the S3 bucket and create a new event notification to trigger the lambda function.
 - In the EC2 instance, go to **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example_object_detection_and_tracking.py** and edit the variable names.
 - In the Lambda function, go to **lambda_function.py** and edit the variable names.
