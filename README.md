@@ -92,13 +92,15 @@
 
       sudo apt-get install python3-tk
 
-- Go to IAM and create and access role for the EC2 isntance with the following policies: **AmazonKinesisVideoStreamsFullAccess**, **AmazonDynamoDBFullAccess**, **AmazonS3FullAccess** and **AmazonSQSFullAccess**.
+- Go to IAM and create an access role for the EC2 instance with the following policies: **AmazonKinesisVideoStreamsFullAccess**, **AmazonDynamoDBFullAccess**, **AmazonS3FullAccess** and **AmazonSQSFullAccess**.
 - Attach the IAM role to the EC2 instance.
 - Download the object detector into the EC2 instance.
 - Go to S3 and create an S3 bucket.
 - Go to Dynamodb and create two tables.
 - Go to SQS and create a FIFO queue.
 - Go to Lambda and create a new Lambda function with the files: **lambda_function.py** and **util.py**.
+- Go to IAM and create an access role for the Lambda function with the following policies: **AmazonDynamoDBFullAccess**, **AmazonS3FullAccess**, **AmazonSQSFullAccess** and **TextractFullAccess**.
+- Attach the IAM role to the Lambda function.
 - Go to the S3 bucket and create a new event notification to trigger the lambda function.
 - In the EC2 instance, go to **amazon-kinesis-video-streams-consumer-library-for-python/kvs_consumer_library_example_object_detection_and_tracking.py** and edit the variable names.
 - In the Lambda function, go to **lambda_function.py** and edit the variable names.
